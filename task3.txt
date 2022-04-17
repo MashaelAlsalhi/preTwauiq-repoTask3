@@ -1,0 +1,86 @@
+create database store;
+
+create table countries(
+    code int primary key ,
+    name varchar(20) unique,
+    continent_name varchar(20) NOT NULL
+);  
+
+
+create table users(
+   id int  primary key ,
+   full_name varchar(20) ,
+   email varchar(20) unique,
+   gender char(1) check(gender='m' or gender='f'),
+   date_of_brith varchar(15),
+   created_at datetime,
+   country_code int ,
+   foreign key (country_code) references countries(code)
+   
+);
+
+create table orders(
+    id int primary key ,
+    user_id int ,
+    status varchar(6) unique check(status='start' or status='finish'),
+    created_at datetime,
+    foreign key (user_id) references users(id)
+);  
+
+
+create table products(
+   id int primary key ,
+    name varchar(10) Not null,
+    price int default 0 ,
+    status varchar(10) check(status='valid' or status='expired'),
+    created_at datetime
+);
+
+
+create table order_products(
+	order_id int unique  Not Null,
+	product_id int unique  Not Null  ,
+    quantity int default 0,
+    foreign key (order_id) references orders(id),
+    foreign key (product_id) references products(id)
+    
+); 
+
+
+#####Bouns 
+ALTER TABLE users  
+CHANGE COLUMN `created_at` `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ;
+
+ALTER TABLE products
+CHANGE COLUMN `created_at` `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ;
+
+
+
+#4 DML commands 
+INSERT INTO countries values ('1','Mashael','ALkhobar');
+INSERT INTO users(id,full_name,email,gender,date_of_brith,country_code) values ('1','Mashael Alsalhi','meshael@gmail.com','f',17/4/1998,1);
+INSERT INTO orders (id, user_id, status) VALUES ('1', '1', 'start');
+INSERT INTO products(id, name, price, status) VALUES ('2', 'apple', '1', 'valid');
+INSERT INTO order_products (order_id, product_id, quantity) VALUES ('1', '2', '7');
+UPDATE countries SET continent_name = 'khobar' WHERE (`code` = '1');
+
+## delete 
+/* first update table*/
+ALTER TABLE `store`.`order_products` 
+DROP FOREIGN KEY `order_products_ibfk_2`;
+ALTER TABLE `store`.`order_products` 
+ADD CONSTRAINT `order_products_ibfk_2`
+  FOREIGN KEY (`product_id`)
+  REFERENCES `store`.`products` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+DELETE FROM products WHERE (`id` = '2');
+
+
+
+
+
+
+
+
